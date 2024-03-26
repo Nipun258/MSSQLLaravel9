@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Post;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Http;
 
 class PostController extends Controller
 {
@@ -11,8 +13,16 @@ class PostController extends Controller
     public function index()
     {
         $posts = Post::all();
-        //dd( $posts);
         return view('post.index',compact('posts'));
+    }
+
+    public function index2(){
+
+        $empNo = 12393;
+        $data = DB::table('insurance_view')->where('strEmpNo',$empNo)->get();
+        dd(trim($data[0]->strBankName));
+
+
     }
 
 
@@ -24,14 +34,14 @@ class PostController extends Controller
 
     public function storePost(Request $request)
     {
-      //validation
-      $request->validate([
-           "titel" => "required",
-           "description" => "required",
-           "length"=>"required",
-       ]);
+        //validation
+        $request->validate([
+            "titel" => "required",
+            "description" => "required",
+            "length" => "required",
+        ]);
 
-      // create course object
+        // create course object
         $post = new Post();
         $post->titel = $request->titel;
         $post->description = $request->description;
@@ -39,7 +49,7 @@ class PostController extends Controller
 
         $post->save();
 
-        return redirect('posts')->with('status','post added successfully');
+        return redirect('posts')->with('status', 'post added successfully');
     }
 
 
@@ -47,11 +57,11 @@ class PostController extends Controller
     {
         $post = Post::findorFail($id);
         //dd($post);
-        return view('post.edit',compact('post'));
+        return view('post.edit', compact('post'));
     }
 
 
-    public function updatePost(Request $request,$id)
+    public function updatePost(Request $request, $id)
     {
         $post_id = $request->id;
 
@@ -60,10 +70,9 @@ class PostController extends Controller
             'titel' => $request->titel,
             'description' => $request->description,
             'length' => $request->length
-         ]);
+        ]);
 
-        return redirect('posts')->with('status','post updated successfully');
-
+        return redirect('posts')->with('status', 'post updated successfully');
     }
 
 
@@ -73,6 +82,6 @@ class PostController extends Controller
 
         Post::findorFail($id)->delete();
 
-        return redirect('posts')->with('status','post deleted successfully');
+        return redirect('posts')->with('status', 'post deleted successfully');
     }
 }
